@@ -1,0 +1,69 @@
+# --- Build artifacts ---------------------------------------------------------
+target/
+build/
+out/
+
+# --- Build helpers (generated locally to work around maven colourised output) -
+cp.txt
+srcs.txt
+
+# --- Local runtime state ------------------------------------------------------
+# The harness caches SEC responses and per-user profiles under ~/.finagent/,
+# so nothing here normally lands in the repo. These patterns cover people who
+# override the paths to point inside the project.
+.finagent/
+eval-results/*.json
+# ...but keep the sample exports, they are part of the write-up
+!eval-results/sample-comparison.csv
+!eval-results/sample-comparison.xlsx
+
+# --- Secrets ------------------------------------------------------------------
+.env
+*.key
+application-local.yml
+application-local.properties
+
+# --- IntelliJ IDEA ------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# --- Eclipse / STS ------------------------------------------------------------
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# --- NetBeans -----------------------------------------------------------------
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# --- VS Code ------------------------------------------------------------------
+.vscode/
+
+# --- OS -----------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---------------------------------------------------------------------
+*.log
+logs/
+
+# --- Local workspace ----------------------------------------------------------
+# Agent memory and one-off helper scripts. Project data, not deliverables.
+.workbuddy/
+
+# --- Submission notes ---------------------------------------------------------
+# Written for the candidate's own use: contains the application email draft and
+# a section of prepared interview answers. Deliberately kept out of the
+# repository that gets sent to the recruiter.
+docs/SUBMISSION.md

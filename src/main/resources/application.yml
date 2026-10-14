@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: finagent-harness
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+finagent:
+  # ---------------------------------------------------------------------------
+  # Research universe. The sector is configuration, not code: swap this file and
+  # the whole harness re-targets. Companies are identified by CIK so we never
+  # depend on ticker changes.
+  # ---------------------------------------------------------------------------
+  sector:
+    id: us-semiconductors
+    display-name: "US Semiconductors & Semiconductor Equipment"
+    companies:
+      - cik: "0001045810"
+        ticker: NVDA
+        name: "NVIDIA Corporation"
+      - cik: "0000002488"
+        ticker: AMD
+        name: "Advanced Micro Devices, Inc."
+      - cik: "0000050863"
+        ticker: INTC
+        name: "Intel Corporation"
+      - cik: "0001730168"
+        ticker: AVGO
+        name: "Broadcom Inc."
+      - cik: "0001835632"
+        ticker: MU
+        name: "Micron Technology, Inc."
+
+  edgar:
+    # SEC requires a descriptive User-Agent with contact info. Set your own here
+    # or via env FINAGENT_EDGAR_USER_AGENT.
+    user-agent: "Persephone Research Agent zmlllll5@163.com"
+    # SEC fair-access guidance: <= 10 requests/second. Stay well under it.
+    requests-per-second: 5
+    timeout-ms: 20000
+    retry-attempts: 3
+    cache-dir: "${user.home}/.finagent/cache/edgar"
+    cache-ttl-minutes: 720
+    use-mock: false
+
+  llm:
+    # provider: openai | mock
+    # "mock" is a deterministic rule-based planner that requires no API key and
+    # produces reproducible output. The harness is fully functional under it:
+    # planning and extraction fall back to the rule engine, while NumericGuard
+    # and ProvenanceTracker are provider-independent and always enforced.
+    provider: mock
+    base-url: "https://api.openai.com/v1"
+    api-key: "${OPENAI_API_KEY:}"
+    model: "gpt-4o-mini"
+    temperature: 0.0
+    max-tokens: 2048
+    timeout-ms: 60000
+
+  guard:
+    # A proposed number must match a filing-derived fact within this relative
+    # tolerance, else it is flagged HALLUCINATION_SUSPECT and stripped.
+    numeric-tolerance: 0.0001
+    # Cross-reference check: Assets == Liabilities + StockholdersEquity
+    enable-balance-sheet-identity-check: true
+    # Strip unverifiable numbers from user-facing output instead of only warning.
+    strip-unverified-numbers: true
+
+  profile:
+    store-dir: "${user.home}/.finagent/profiles"
+    # After this many observations of a metric the profile treats it as a habit.
+    metric-affinity-threshold: 3
+
+logging:
+  level:
+    root: INFO
+    com.persephone.finagent: DEBUG
